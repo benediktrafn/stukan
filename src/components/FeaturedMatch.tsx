@@ -1,6 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { Trophy } from "lucide-react";
 import { formatTime, getRelativeDateLabel } from "@/lib/dateUtils";
+import { isToday } from "date-fns";
 
 interface Match {
     id: number;
@@ -46,28 +47,37 @@ export default async function FeaturedMatch() {
         return null;
     }
 
-    const dateLabel = getRelativeDateLabel(match.start_time);
+    const matchDate = new Date(match.start_time);
+    const isMatchToday = isToday(matchDate);
+
+    // Label Logic
+    const label = match.is_highlight
+        ? "FEATURED EVENT"
+        : (isMatchToday ? "TODAY" : "UPCOMING");
+
+    // Color Logic (Gold if Today or Highlight)
+    const isGold = match.is_highlight || isMatchToday;
 
     return (
         <div className="w-full bg-[#1E1E1E]/95 backdrop-blur-sm border-t border-white/10">
             <div className="max-w-6xl mx-auto px-4 py-4">
-                {/* Desktop: Horizontal layout */}
-                <div className="hidden md:flex items-center justify-between">
+                {/* Desktop: Centered Horizontal layout */}
+                <div className="hidden md:flex items-center justify-center gap-12">
                     {/* Left: Badge */}
-                    <div className="flex items-center gap-2">
-                        <Trophy className="h-4 w-4 text-brand-gold" />
-                        <span className="text-sm font-semibold tracking-widest text-brand-gold uppercase">
-                            {match.is_highlight ? "FEATURED EVENT" : dateLabel}
+                    <div className="flex items-center gap-2 min-w-[140px] justify-end">
+                        <Trophy className={`h-4 w-4 ${isGold ? "text-brand-gold" : "text-white/70"}`} />
+                        <span className={`text-sm font-semibold tracking-widest uppercase ${isGold ? "text-brand-gold" : "text-white/70"}`}>
+                            {label}
                         </span>
                     </div>
 
                     {/* Center: Teams */}
-                    <h2 className="font-serif text-xl lg:text-2xl font-bold text-text-primary">
+                    <h2 className="font-serif text-xl lg:text-2xl font-bold text-text-primary text-center">
                         {match.teams}
                     </h2>
 
                     {/* Right: Time */}
-                    <span className="text-lg font-mono font-bold text-text-primary">
+                    <span className="text-lg font-mono font-bold text-text-primary min-w-[80px]">
                         {formatTime(match.start_time)}
                     </span>
                 </div>
@@ -75,9 +85,9 @@ export default async function FeaturedMatch() {
                 {/* Mobile: Stacked layout */}
                 <div className="flex flex-col items-center gap-2 md:hidden">
                     <div className="flex items-center gap-2">
-                        <Trophy className="h-4 w-4 text-brand-gold" />
-                        <span className="text-xs font-semibold tracking-widest text-brand-gold uppercase">
-                            {match.is_highlight ? "FEATURED EVENT" : dateLabel}
+                        <Trophy className={`h-4 w-4 ${isGold ? "text-brand-gold" : "text-white/70"}`} />
+                        <span className={`text-xs font-semibold tracking-widest uppercase ${isGold ? "text-brand-gold" : "text-white/70"}`}>
+                            {label}
                         </span>
                     </div>
                     <h2 className="font-serif text-lg font-bold text-text-primary text-center">
