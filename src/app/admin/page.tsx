@@ -230,8 +230,8 @@ export default function AdminPage() {
                         <button
                             type="submit"
                             className={`w-full py-3 font-semibold rounded-lg transition-colors ${editingMatch
-                                    ? "bg-blue-600 hover:bg-blue-500 text-white"
-                                    : "bg-brand-gold hover:bg-brand-gold/90 text-bg-main"
+                                ? "bg-blue-600 hover:bg-blue-500 text-white"
+                                : "bg-brand-gold hover:bg-brand-gold/90 text-bg-main"
                                 }`}
                         >
                             {editingMatch ? "Update Match" : "Add to Schedule"}

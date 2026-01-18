@@ -1,7 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { Trophy } from "lucide-react";
-import { formatTime, getRelativeDateLabel } from "@/lib/dateUtils";
-import { isToday } from "date-fns";
+import { formatTime } from "@/lib/dateUtils";
+import { isToday, isTomorrow, format } from "date-fns";
 
 interface Match {
     id: number;
@@ -12,51 +12,57 @@ interface Match {
 }
 
 export default async function FeaturedMatch() {
-    // Try to get a highlighted match, otherwise get the next upcoming match
     let match: Match | null = null;
+    let label = "";
+    let isGold = false;
 
     try {
-        // First try to get a highlighted match
-        const highlightResult = await sql`
-      SELECT * FROM matches 
-      WHERE is_highlight = true AND start_time > NOW() 
-      ORDER BY start_time ASC 
-      LIMIT 1
-    `;
+        // Fetch next 5 upcoming matches to determine priority in JS
+        const result = await sql`
+            SELECT * FROM matches 
+            WHERE start_time > NOW() 
+            ORDER BY start_time ASC 
+            LIMIT 5
+        `;
 
-        if (highlightResult.rows.length > 0) {
-            match = highlightResult.rows[0] as Match;
+        if (result.rows.length === 0) {
+            return null;
+        }
+
+        const matches = result.rows as Match[];
+
+        // 1. Look for TODAY
+        const todayMatches = matches.filter(m => isToday(new Date(m.start_time)));
+
+        if (todayMatches.length > 0) {
+            // Prioritize highlighted match today, otherwise earliest today
+            match = todayMatches.find(m => m.is_highlight) || todayMatches[0];
+            label = "TODAY";
+            isGold = true;
         } else {
-            // Fallback to next upcoming match
-            const nextResult = await sql`
-        SELECT * FROM matches 
-        WHERE start_time > NOW() 
-        ORDER BY start_time ASC 
-        LIMIT 1
-      `;
-            if (nextResult.rows.length > 0) {
-                match = nextResult.rows[0] as Match;
+            // 2. Look for TOMORROW
+            const tomorrowMatches = matches.filter(m => isTomorrow(new Date(m.start_time)));
+
+            if (tomorrowMatches.length > 0) {
+                // Prioritize highlighted match tomorrow, otherwise earliest tomorrow
+                match = tomorrowMatches.find(m => m.is_highlight) || tomorrowMatches[0];
+                label = "TOMORROW";
+                isGold = false; // Tomorrow is standard white
+            } else {
+                // 3. Fallback to next upcoming
+                match = matches[0];
+                // Format: "Fri, 24. Jan"
+                label = format(new Date(match.start_time), "EEE, d. MMM");
+                isGold = false;
             }
         }
+
     } catch (error) {
         console.error("Error fetching featured match:", error);
         return null;
     }
 
-    if (!match) {
-        return null;
-    }
-
-    const matchDate = new Date(match.start_time);
-    const isMatchToday = isToday(matchDate);
-
-    // Label Logic
-    const label = isMatchToday
-        ? "TODAY"
-        : (match.is_highlight ? "FEATURED EVENT" : "UPCOMING");
-
-    // Color Logic (Gold if Today or Highlight)
-    const isGold = match.is_highlight || isMatchToday;
+    if (!match) return null;
 
     return (
         <div className="w-full bg-[#1E1E1E]/95 backdrop-blur-sm border-t border-white/10">
