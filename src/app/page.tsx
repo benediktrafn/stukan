@@ -3,6 +3,7 @@ import { Clock, Crosshair, Tv, MapPin } from "lucide-react";
 import TopNav from "@/components/TopNav";
 import FeaturedMatch from "@/components/FeaturedMatch";
 import MobileFooter from "@/components/MobileFooter";
+import ContactFooter from "@/components/ContactFooter";
 import ScheduleSection from "@/components/ScheduleSection";
 import { drinks } from "@/data/drinks";
 
@@ -123,12 +124,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer id="location" className="py-8 px-4 border-t border-white/10 bg-bg-main">
-        <div className="max-w-4xl mx-auto text-center text-text-primary/50 text-sm">
-          <p>© 2026 Stúkan RVK Sportbar. All rights reserved.</p>
-        </div>
-      </footer>
+      {/* Premium Contact Footer */}
+      <ContactFooter />
 
       {/* Mobile Footer */}
       <MobileFooter />
