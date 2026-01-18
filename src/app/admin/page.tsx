@@ -1,7 +1,10 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { addMatch, deleteMatch, getMatches, updateMatch } from "@/lib/actions";
+import {
+    addMatch, deleteMatch, getMatches, updateMatch,
+    addDrink, deleteDrink, getDrinks, updateDrink
+} from "@/lib/actions";
 
 interface Match {
     id: number;
@@ -11,12 +14,28 @@ interface Match {
     is_highlight: boolean;
 }
 
+interface Drink {
+    id: number;
+    name: string;
+    description: string | null;
+    price: number;
+}
+
 export default function AdminPage() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState("");
+    const [activeTab, setActiveTab] = useState<'schedule' | 'drinks'>('schedule');
+
+    // Data States
     const [matches, setMatches] = useState<Match[]>([]);
+    const [drinks, setDrinks] = useState<Drink[]>([]);
+
+    // Edit States
     const [editingMatch, setEditingMatch] = useState<Match | null>(null);
-    const formRef = useRef<HTMLFormElement>(null);
+    const [editingDrink, setEditingDrink] = useState<Drink | null>(null);
+
+    const matchFormRef = useRef<HTMLFormElement>(null);
+    const drinkFormRef = useRef<HTMLFormElement>(null);
 
     useEffect(() => {
         // Check URL for password
@@ -24,88 +43,78 @@ export default function AdminPage() {
         const pass = params.get("pass");
         if (pass === process.env.NEXT_PUBLIC_ADMIN_PASSWORD || pass === "stukan2026") {
             setIsAuthenticated(true);
-            loadMatches();
+            loadData();
         }
     }, []);
 
-    async function loadMatches() {
-        const data = await getMatches();
-        setMatches(data as Match[]);
+    async function loadData() {
+        const matchesData = await getMatches();
+        setMatches(matchesData as Match[]);
+
+        const drinksData = await getDrinks();
+        setDrinks(drinksData as Drink[]);
     }
 
-    async function handleSubmit(formData: FormData): Promise<void> {
+    // --- MATCH HANDLERS ---
+    async function handleMatchSubmit(formData: FormData): Promise<void> {
         let result;
-
         if (editingMatch) {
-            // Include ID in formData explicitly if needed, but it's redundant if hidden input works
-            // The hidden input <input name="id" ... /> handles it.
             result = await updateMatch(formData);
         } else {
             result = await addMatch(formData);
         }
 
-        if (result?.error) {
-            alert(result.error);
-        }
+        if (result?.error) alert(result.error);
         if (result?.success) {
-            formRef.current?.reset();
+            matchFormRef.current?.reset();
             setEditingMatch(null);
-            alert(editingMatch ? "Match Updated!" : "Match Added!");
-            await loadMatches();
+            loadData();
         }
     }
 
-    async function handleDelete(id: number): Promise<void> {
-        if (!confirm("Are you sure you want to delete this match?")) return;
-
+    async function handleMatchDelete(id: number): Promise<void> {
+        if (!confirm("Delete this match?")) return;
         const result = await deleteMatch(id);
-        if (result?.error) {
-            alert(result.error);
+        if (result?.success) loadData();
+    }
+
+    // --- DRINK HANDLERS ---
+    async function handleDrinkSubmit(formData: FormData): Promise<void> {
+        let result;
+        if (editingDrink) {
+            result = await updateDrink(formData);
+        } else {
+            result = await addDrink(formData);
         }
+
+        if (result?.error) alert(result.error);
         if (result?.success) {
-            await loadMatches();
-            // If we deleted the item being edited, clear edit state
-            if (editingMatch?.id === id) {
-                setEditingMatch(null);
-                formRef.current?.reset();
-            }
+            drinkFormRef.current?.reset();
+            setEditingDrink(null);
+            loadData();
         }
     }
 
-    function handleEdit(match: Match) {
-        setEditingMatch(match);
-        // Scroll to top to see form
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    async function handleDrinkDelete(id: number): Promise<void> {
+        if (!confirm("Delete this drink?")) return;
+        const result = await deleteDrink(id);
+        if (result?.success) loadData();
     }
 
-    function handleCancelEdit() {
-        setEditingMatch(null);
-        formRef.current?.reset();
-    }
-
+    // --- HELPERS ---
     function handlePasswordSubmit(e: React.FormEvent) {
         e.preventDefault();
         window.location.href = `/admin?pass=${password}`;
     }
 
-    // Helper to format date for input (YYYY-MM-DD)
-    const getDateValue = (startTime: string) => {
-        return new Date(startTime).toISOString().split('T')[0];
-    };
+    const getDateValue = (startTime: string) => new Date(startTime).toISOString().split('T')[0];
+    const getTimeValue = (startTime: string) => new Date(startTime).toISOString().substring(11, 16);
 
-    // Helper to format time for input (HH:mm)
-    const getTimeValue = (startTime: string) => {
-        return new Date(startTime).toISOString().substring(11, 16);
-    };
-
-    // Password form
     if (!isAuthenticated) {
         return (
             <main className="min-h-screen bg-bg-main flex items-center justify-center p-4">
                 <div className="bg-bg-card p-8 rounded-xl border border-white/10 max-w-md w-full">
-                    <h1 className="font-serif text-2xl text-brand-gold mb-6 text-center">
-                        Admin Access
-                    </h1>
+                    <h1 className="font-serif text-2xl text-brand-gold mb-6 text-center">Admin Access</h1>
                     <form onSubmit={handlePasswordSubmit}>
                         <input
                             type="password"
@@ -115,10 +124,7 @@ export default function AdminPage() {
                             className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary mb-4 focus:border-brand-gold focus:outline-none"
                             autoFocus
                         />
-                        <button
-                            type="submit"
-                            className="w-full py-3 bg-brand-gold text-bg-main font-semibold rounded-lg hover:bg-brand-gold/90 transition-colors"
-                        >
+                        <button type="submit" className="w-full py-3 bg-brand-gold text-bg-main font-semibold rounded-lg hover:bg-brand-gold/90 transition-colors">
                             Enter
                         </button>
                     </form>
@@ -130,177 +136,151 @@ export default function AdminPage() {
     return (
         <main className="min-h-screen bg-bg-main p-4 md:p-8">
             <div className="max-w-4xl mx-auto">
-                <h1 className="font-serif text-3xl text-brand-gold mb-8 text-center">
-                    Admin Dashboard
-                </h1>
+                <h1 className="font-serif text-3xl text-brand-gold mb-8 text-center">Dashboard</h1>
 
-                {/* Create/Edit Match Form */}
-                <div className="bg-bg-card p-6 rounded-xl border border-white/10 mb-8">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold text-text-primary">
-                            {editingMatch ? "Edit Match" : "Add New Match"}
-                        </h2>
-                        {editingMatch && (
-                            <button
-                                type="button"
-                                onClick={handleCancelEdit}
-                                className="text-sm text-text-primary/70 hover:text-white underline"
-                            >
-                                Cancel Editing
-                            </button>
-                        )}
-                    </div>
-
-                    <form
-                        ref={formRef}
-                        action={handleSubmit}
-                        className="space-y-4"
-                        key={editingMatch ? editingMatch.id : "new"} // Force re-render when switching modes
+                {/* TABS */}
+                <div className="flex gap-4 mb-8">
+                    <button
+                        onClick={() => setActiveTab('schedule')}
+                        className={`flex-1 py-4 text-center rounded-xl font-bold tracking-widest uppercase transition-all ${activeTab === 'schedule'
+                                ? "bg-brand-gold text-bg-main shadow-lg"
+                                : "bg-bg-card text-text-primary/50 hover:bg-white/5"
+                            }`}
                     >
-                        {/* Hidden ID field for updates */}
-                        <input type="hidden" name="id" value={editingMatch?.id || ""} />
-
-                        <div>
-                            <label className="block text-sm text-text-primary/70 mb-1">
-                                Teams
-                            </label>
-                            <input
-                                type="text"
-                                name="teams"
-                                placeholder="Home Team vs Away Team"
-                                required
-                                defaultValue={editingMatch?.teams || ""}
-                                className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm text-text-primary/70 mb-1">
-                                    Date
-                                </label>
-                                <input
-                                    type="date"
-                                    name="date"
-                                    required
-                                    defaultValue={editingMatch ? getDateValue(editingMatch.start_time) : ""}
-                                    className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm text-text-primary/70 mb-1">
-                                    Time
-                                </label>
-                                <input
-                                    type="time"
-                                    name="time"
-                                    required
-                                    defaultValue={editingMatch ? getTimeValue(editingMatch.start_time) : ""}
-                                    className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none"
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm text-text-primary/70 mb-1">
-                                League (optional)
-                            </label>
-                            <input
-                                type="text"
-                                name="league"
-                                placeholder="Premier League, Champions League, etc."
-                                defaultValue={editingMatch?.league || ""}
-                                className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none"
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                name="isHighlight"
-                                id="isHighlight"
-                                defaultChecked={editingMatch?.is_highlight || false}
-                                className="w-4 h-4 accent-brand-gold"
-                            />
-                            <label htmlFor="isHighlight" className="text-sm text-text-primary/70">
-                                Featured Event (Highlight)
-                            </label>
-                        </div>
-
-                        <button
-                            type="submit"
-                            className={`w-full py-3 font-semibold rounded-lg transition-colors ${editingMatch
-                                ? "bg-blue-600 hover:bg-blue-500 text-white"
-                                : "bg-brand-gold hover:bg-brand-gold/90 text-bg-main"
-                                }`}
-                        >
-                            {editingMatch ? "Update Match" : "Add to Schedule"}
-                        </button>
-                    </form>
+                        Schedule
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('drinks')}
+                        className={`flex-1 py-4 text-center rounded-xl font-bold tracking-widest uppercase transition-all ${activeTab === 'drinks'
+                                ? "bg-brand-gold text-bg-main shadow-lg"
+                                : "bg-bg-card text-text-primary/50 hover:bg-white/5"
+                            }`}
+                    >
+                        Drinks
+                    </button>
                 </div>
 
-                {/* Current Schedule */}
-                <div className="bg-bg-card p-6 rounded-xl border border-white/10">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">
-                        Current Schedule ({matches.length} matches)
-                    </h2>
+                {/* --- SCHEDULE TAB --- */}
+                {activeTab === 'schedule' && (
+                    <div className="space-y-8 animate-in fade-in duration-300">
+                        {/* Match Form */}
+                        <div className="bg-bg-card p-6 rounded-xl border border-white/10">
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-lg font-semibold text-text-primary">
+                                    {editingMatch ? "Edit Match" : "Add Match"}
+                                </h2>
+                                {editingMatch && (
+                                    <button onClick={() => { setEditingMatch(null); matchFormRef.current?.reset(); }} className="text-sm text-text-primary/70 hover:text-white underline">
+                                        Cancel
+                                    </button>
+                                )}
+                            </div>
+                            <form ref={matchFormRef} action={handleMatchSubmit} className="space-y-4" key={editingMatch?.id || "new-match"}>
+                                <input type="hidden" name="id" value={editingMatch?.id || ""} />
+                                <input type="text" name="teams" placeholder="Home vs Away" required defaultValue={editingMatch?.teams || ""} className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <input type="date" name="date" required defaultValue={editingMatch ? getDateValue(editingMatch.start_time) : ""} className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none" />
+                                    <input type="time" name="time" required defaultValue={editingMatch ? getTimeValue(editingMatch.start_time) : ""} className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none" />
+                                </div>
+                                <input type="text" name="league" placeholder="League (Optional)" defaultValue={editingMatch?.league || ""} className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none" />
+                                <div className="flex items-center gap-2">
+                                    <input type="checkbox" name="isHighlight" id="isHighlight" defaultChecked={editingMatch?.is_highlight || false} className="w-4 h-4 accent-brand-gold" />
+                                    <label htmlFor="isHighlight" className="text-sm text-text-primary/70">Highlight Event</label>
+                                </div>
+                                <button type="submit" className={`w-full py-3 font-bold rounded-lg ${editingMatch ? "bg-blue-600 text-white" : "bg-brand-gold text-bg-main"}`}>
+                                    {editingMatch ? "Update Match" : "Add to Schedule"}
+                                </button>
+                            </form>
+                        </div>
 
-                    {matches.length === 0 ? (
-                        <p className="text-text-primary/50 text-center py-8">
-                            No matches scheduled yet.
-                        </p>
-                    ) : (
-                        <ul className="divide-y divide-white/10">
-                            {matches.map((match) => (
-                                <li key={match.id} className={`flex items-center justify-between py-3 ${editingMatch?.id === match.id ? "bg-white/5 rounded px-2 -mx-2" : ""}`}>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                            {match.is_highlight && (
-                                                <span className="text-xs bg-brand-gold/20 text-brand-gold px-2 py-0.5 rounded">
-                                                    HIGHLIGHT
-                                                </span>
-                                            )}
-                                            <span className="text-text-primary font-medium">
+                        {/* Match List */}
+                        <div className="bg-bg-card p-6 rounded-xl border border-white/10">
+                            <h2 className="text-lg font-semibold text-text-primary mb-4">Current Schedule</h2>
+                            <ul className="divide-y divide-white/10">
+                                {matches.map((match) => (
+                                    <li key={match.id} className="flex items-center justify-between py-3">
+                                        <div>
+                                            <div className="font-medium text-text-primary">
+                                                {match.is_highlight && <span className="text-brand-gold mr-2">★</span>}
                                                 {match.teams}
-                                            </span>
+                                            </div>
+                                            <div className="text-xs text-text-primary/50">
+                                                {new Date(match.start_time).toLocaleString("en-GB", { weekday: 'short', hour: '2-digit', minute: '2-digit' })}
+                                            </div>
                                         </div>
-                                        <div className="text-sm text-text-primary/50 mt-1">
-                                            {new Date(match.start_time).toLocaleString("en-GB", {
-                                                weekday: "short",
-                                                day: "numeric",
-                                                month: "short",
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}{" "}
-                                            {match.league && `• ${match.league}`}
+                                        <div className="flex gap-2">
+                                            <button onClick={() => { setEditingMatch(match); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="p-2 text-blue-400 hover:bg-white/5 rounded">✏️</button>
+                                            <button onClick={() => handleMatchDelete(match.id)} className="p-2 text-red-500 hover:bg-white/5 rounded">✕</button>
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={() => handleEdit(match)}
-                                            className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
-                                            title="Edit match"
-                                        >
-                                            ✏️
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(match.id)}
-                                            className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
-                                            title="Delete match"
-                                        >
-                                            ✕
-                                        </button>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                )}
 
-                <p className="text-center text-text-primary/30 text-sm mt-8">
-                    <a href="/" className="hover:text-brand-gold transition-colors">
-                        ← Back to Home
-                    </a>
+                {/* --- DRINKS TAB --- */}
+                {activeTab === 'drinks' && (
+                    <div className="space-y-8 animate-in fade-in duration-300">
+                        {/* Drink Form */}
+                        <div className="bg-bg-card p-6 rounded-xl border border-white/10">
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-lg font-semibold text-text-primary">
+                                    {editingDrink ? "Edit Drink" : "Add Drink"}
+                                </h2>
+                                {editingDrink && (
+                                    <button onClick={() => { setEditingDrink(null); drinkFormRef.current?.reset(); }} className="text-sm text-text-primary/70 hover:text-white underline">
+                                        Cancel
+                                    </button>
+                                )}
+                            </div>
+                            <form ref={drinkFormRef} action={handleDrinkSubmit} className="space-y-4" key={editingDrink?.id || "new-drink"}>
+                                <input type="hidden" name="id" value={editingDrink?.id || ""} />
+
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div className="col-span-2">
+                                        <input type="text" name="name" placeholder="Drink Name (e.g. Víking Gull)" required defaultValue={editingDrink?.name || ""} className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none" />
+                                    </div>
+                                    <div>
+                                        <input type="number" name="price" placeholder="Price (kr)" required defaultValue={editingDrink?.price || ""} className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none" />
+                                    </div>
+                                </div>
+                                <input type="text" name="description" placeholder="Description (e.g. Draft 0.5L)" defaultValue={editingDrink?.description || ""} className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none" />
+
+                                <button type="submit" className={`w-full py-3 font-bold rounded-lg ${editingDrink ? "bg-blue-600 text-white" : "bg-brand-gold text-bg-main"}`}>
+                                    {editingDrink ? "Update Drink" : "Add Drink"}
+                                </button>
+                            </form>
+                        </div>
+
+                        {/* Drink List */}
+                        <div className="bg-bg-card p-6 rounded-xl border border-white/10">
+                            <h2 className="text-lg font-semibold text-text-primary mb-4">Current Menu</h2>
+                            <ul className="divide-y divide-white/10">
+                                {drinks.map((drink) => (
+                                    <li key={drink.id} className="flex items-center justify-between py-3">
+                                        <div>
+                                            <div className="flex items-center gap-3">
+                                                <span className="font-medium text-text-primary">{drink.name}</span>
+                                                <span className="text-brand-gold font-mono text-sm">{drink.price.toLocaleString('is-IS')} kr</span>
+                                            </div>
+                                            {drink.description && (
+                                                <div className="text-xs text-text-primary/50">{drink.description}</div>
+                                            )}
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => { setEditingDrink(drink); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="p-2 text-blue-400 hover:bg-white/5 rounded">✏️</button>
+                                            <button onClick={() => handleDrinkDelete(drink.id)} className="p-2 text-red-500 hover:bg-white/5 rounded">✕</button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                )}
+
+                <p className="text-center text-text-primary/30 text-sm mt-12 hover:text-white transition-colors">
+                    <a href="/">← Back to Home</a>
                 </p>
             </div>
         </main>

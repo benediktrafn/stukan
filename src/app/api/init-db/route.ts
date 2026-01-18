@@ -13,6 +13,14 @@ export async function GET() {
       is_highlight BOOLEAN DEFAULT FALSE,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`;
+
+        await sql`CREATE TABLE IF NOT EXISTS drinks (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT,
+      price INTEGER NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`;
         return NextResponse.json({ message: 'Table created successfully' });
     } catch (error) {
         return NextResponse.json({ error: String(error) }, { status: 500 });

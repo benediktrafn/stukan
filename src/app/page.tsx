@@ -5,12 +5,20 @@ import FeaturedMatch from "@/components/FeaturedMatch";
 import MobileFooter from "@/components/MobileFooter";
 import ContactFooter from "@/components/ContactFooter";
 import ScheduleSection from "@/components/ScheduleSection";
-import { drinks } from "@/data/drinks";
+import { getDrinks } from "@/lib/actions";
+
+interface Drink {
+  id: number;
+  name: string;
+  description: string | null;
+  price: number;
+}
 
 // Force dynamic rendering (uses database)
 export const dynamic = "force-dynamic";
 
-export default function Home() {
+export default async function Home() {
+  const drinks = await getDrinks() as Drink[];
   return (
     <main className="min-h-screen pb-20 md:pb-0">
       {/* Hero Section with Background */}
@@ -112,7 +120,7 @@ export default function Home() {
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-semibold text-text-primary">{drink.name}</h3>
                   <span className="text-brand-gold font-mono text-sm">
-                    {drink.price}
+                    {drink.price.toLocaleString('is-IS')} kr
                   </span>
                 </div>
                 {drink.description && (

@@ -89,3 +89,75 @@ export async function getMatches() {
         return [];
     }
 }
+
+// --- DRINKS ACTIONS ---
+
+export async function getDrinks() {
+    try {
+        const result = await sql`SELECT * FROM drinks ORDER BY created_at ASC`;
+        return result.rows;
+    } catch (error) {
+        console.error("Error fetching drinks:", error);
+        return [];
+    }
+}
+
+export async function addDrink(formData: FormData) {
+    const name = formData.get("name") as string;
+    const description = formData.get("description") as string;
+    const price = Number(formData.get("price"));
+
+    if (!name || !price) {
+        return { error: "Name and price are required" };
+    }
+
+    try {
+        await sql`
+      INSERT INTO drinks (name, description, price)
+      VALUES (${name}, ${description}, ${price})
+    `;
+        revalidatePath("/");
+        revalidatePath("/admin");
+        return { success: true };
+    } catch (error) {
+        console.error("Error adding drink:", error);
+        return { error: String(error) };
+    }
+}
+
+export async function updateDrink(formData: FormData) {
+    const id = Number(formData.get("id"));
+    const name = formData.get("name") as string;
+    const description = formData.get("description") as string;
+    const price = Number(formData.get("price"));
+
+    if (!id || !name || !price) {
+        return { error: "ID, Name, and Price are required" };
+    }
+
+    try {
+        await sql`
+      UPDATE drinks 
+      SET name=${name}, description=${description}, price=${price}
+      WHERE id=${id}
+    `;
+        revalidatePath("/");
+        revalidatePath("/admin");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating drink:", error);
+        return { error: String(error) };
+    }
+}
+
+export async function deleteDrink(id: number) {
+    try {
+        await sql`DELETE FROM drinks WHERE id = ${id}`;
+        revalidatePath("/");
+        revalidatePath("/admin");
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting drink:", error);
+        return { error: String(error) };
+    }
+}
