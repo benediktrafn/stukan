@@ -51,9 +51,9 @@ export default async function FeaturedMatch() {
     const isMatchToday = isToday(matchDate);
 
     // Label Logic
-    const label = match.is_highlight
-        ? "FEATURED EVENT"
-        : (isMatchToday ? "TODAY" : "UPCOMING");
+    const label = isMatchToday
+        ? "TODAY"
+        : (match.is_highlight ? "FEATURED EVENT" : "UPCOMING");
 
     // Color Logic (Gold if Today or Highlight)
     const isGold = match.is_highlight || isMatchToday;
