@@ -1,0 +1,170 @@
+[
+    {
+        "id": 1,
+        "teams": "Wolverhampton vs Newcastle",
+        "isoDate": "2026-01-18T14:00:00",
+        "league": "Premier League"
+    },
+    {
+        "id": 2,
+        "teams": "Aston Villa vs Everton",
+        "isoDate": "2026-01-18T16:30:00",
+        "league": "Premier League"
+    },
+    {
+        "id": 3,
+        "teams": "Ísland vs Pólland",
+        "isoDate": "2026-01-18T17:00:00",
+        "league": "EHF Euro 2026"
+    },
+    {
+        "id": 4,
+        "teams": "Houston Texans vs New England Patriots",
+        "isoDate": "2026-01-18T20:00:00",
+        "league": "NFL Playoffs"
+    },
+    {
+        "id": 5,
+        "teams": "Los Angeles Rams vs Chicago Bears",
+        "isoDate": "2026-01-18T23:30:00",
+        "league": "NFL Playoffs"
+    },
+    {
+        "id": 6,
+        "teams": "Brighton vs Bournemouth",
+        "isoDate": "2026-01-19T20:00:00",
+        "league": "Premier League"
+    },
+    {
+        "id": 7,
+        "teams": "Kairat Almaty vs Club Brugge",
+        "isoDate": "2026-01-20T15:30:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 8,
+        "teams": "FK Bodø/Glimt vs Manchester City",
+        "isoDate": "2026-01-20T17:45:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 9,
+        "teams": "Hungary vs Iceland",
+        "isoDate": "2026-01-20T19:30:00",
+        "league": "EHF Euro 2026"
+    },
+    {
+        "id": 10,
+        "teams": "Inter Milan vs Arsenal",
+        "isoDate": "2026-01-20T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 11,
+        "teams": "Tottenham vs Borussia Dortmund",
+        "isoDate": "2026-01-20T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 12,
+        "teams": "Sporting CP vs PSG",
+        "isoDate": "2026-01-20T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 13,
+        "teams": "Real Madrid vs Monaco",
+        "isoDate": "2026-01-20T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 14,
+        "teams": "Villarreal vs Ajax",
+        "isoDate": "2026-01-20T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 15,
+        "teams": "Galatasaray vs Atlético Madrid",
+        "isoDate": "2026-01-21T17:45:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 16,
+        "teams": "Qarabag vs Eintracht Frankfurt",
+        "isoDate": "2026-01-21T17:45:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 17,
+        "teams": "Newcastle vs PSV Eindhoven",
+        "isoDate": "2026-01-21T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 18,
+        "teams": "Marseille vs Liverpool",
+        "isoDate": "2026-01-21T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 19,
+        "teams": "Chelsea vs Pafos",
+        "isoDate": "2026-01-21T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 20,
+        "teams": "Juventus vs Benfica",
+        "isoDate": "2026-01-21T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 21,
+        "teams": "Bayern Munich vs Union Saint-Gilloise",
+        "isoDate": "2026-01-21T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 22,
+        "teams": "Atalanta vs Athletic Bilbao",
+        "isoDate": "2026-01-21T20:00:00",
+        "league": "Champions League"
+    },
+    {
+        "id": 23,
+        "teams": "Burnley vs Tottenham",
+        "isoDate": "2026-01-24T15:00:00",
+        "league": "Premier League"
+    },
+    {
+        "id": 24,
+        "teams": "Bournemouth vs Liverpool",
+        "isoDate": "2026-01-24T17:30:00",
+        "league": "Premier League"
+    },
+    {
+        "id": 25,
+        "teams": "Crystal Palace vs Chelsea",
+        "isoDate": "2026-01-25T14:00:00",
+        "league": "Premier League"
+    },
+    {
+        "id": 26,
+        "teams": "Newcastle vs Aston Villa",
+        "isoDate": "2026-01-25T14:00:00",
+        "league": "Premier League"
+    },
+    {
+        "id": 27,
+        "teams": "Arsenal vs Manchester United",
+        "isoDate": "2026-01-25T16:30:00",
+        "league": "Premier League"
+    },
+    {
+        "id": 28,
+        "teams": "Everton vs Leeds United",
+        "isoDate": "2026-01-26T20:00:00",
+        "league": "Premier League"
+    }
+]

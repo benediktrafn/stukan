@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Warm Neutral Palette */
+  --color-bg-main: #121212;
+  --color-bg-card: #1E1E1E;
+  --color-text-primary: #F5F5F5;
+  --color-brand-gold: #D4AF37;
+
+  /* Font Variables */
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+body {
+  background-color: #121212;
+  color: #F5F5F5;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+/* Gold text shadow for logo */
+.drop-shadow-gold {
+  filter: drop-shadow(0 4px 20px rgba(212, 175, 55, 0.3)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+}
