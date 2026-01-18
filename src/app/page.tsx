@@ -31,7 +31,7 @@ export default function Home() {
         <TopNav />
 
         {/* Centered Logo & Info */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center pt-24 md:pt-40">
 
           {/* 1. THE LOGO (Massive & Centered) */}
           <div className="mb-12 opacity-90 hover:opacity-100 transition-opacity duration-500">
