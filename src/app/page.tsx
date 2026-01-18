@@ -30,8 +30,8 @@ export default function Home() {
         {/* Top Navigation */}
         <TopNav />
 
-        {/* Centered Logo */}
-        <div className="relative z-10 flex-1 flex items-center justify-center">
+        {/* Centered Logo & Info */}
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-10">
           <Image
             src="/logo.svg"
             alt="Stúkan Logo"
@@ -40,31 +40,27 @@ export default function Home() {
             className="h-40 w-auto drop-shadow-gold"
             priority
           />
+
+          {/* Info Bar - Moved under Logo */}
+          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12 text-white/90">
+            <div className="flex items-center gap-3">
+              <Clock className="h-5 w-5 text-brand-gold" />
+              <span className="font-medium tracking-wide">Happy Hour 15-19</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <Crosshair className="h-5 w-5 text-brand-gold" />
+              <span className="font-medium tracking-wide">Pool & Darts</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <Tv className="h-5 w-5 text-brand-gold" />
+              <span className="font-medium tracking-wide">Live Sports</span>
+            </div>
+          </div>
         </div>
 
         {/* Spotlight Banner - Docked at bottom */}
         <div className="relative z-10">
           <FeaturedMatch />
-        </div>
-      </section>
-
-      {/* Info-Bar Section */}
-      <section className="sticky top-0 z-20 bg-[#1E1E1E]/95 backdrop-blur-sm border-y border-white/10">
-        <div className="max-w-5xl mx-auto px-4 py-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
-            <div className="flex items-center justify-center gap-3">
-              <Clock className="h-6 w-6 text-brand-gold" />
-              <span className="text-sm md:text-base text-text-primary">Happy Hour 15-19</span>
-            </div>
-            <div className="flex items-center justify-center gap-3">
-              <Crosshair className="h-6 w-6 text-brand-gold" />
-              <span className="text-sm md:text-base text-text-primary">Pool & Darts</span>
-            </div>
-            <div className="flex items-center justify-center gap-3">
-              <Tv className="h-6 w-6 text-brand-gold" />
-              <span className="text-sm md:text-base text-text-primary">Live Sports</span>
-            </div>
-          </div>
         </div>
       </section>
 
