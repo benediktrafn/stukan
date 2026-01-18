@@ -18,7 +18,7 @@ export default async function ScheduleSection() {
             <section id="schedule" className="py-16 px-4 bg-bg-main">
                 <div className="max-w-3xl mx-auto text-center">
                     <h2 className="font-serif text-2xl md:text-3xl text-brand-gold mb-8">
-                        Upcoming Matches
+                        Upcoming Events
                     </h2>
                     <p className="text-text-primary/50">No matches scheduled.</p>
                 </div>
@@ -30,7 +30,7 @@ export default async function ScheduleSection() {
         <section id="schedule" className="py-16 px-4 bg-bg-main">
             <div className="max-w-3xl mx-auto">
                 <h2 className="font-serif text-2xl md:text-3xl text-brand-gold text-center mb-12">
-                    Upcoming Matches
+                    Upcoming Events
                 </h2>
 
                 <div className="space-y-10">
