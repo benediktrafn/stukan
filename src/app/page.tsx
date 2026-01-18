@@ -36,8 +36,8 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-[#121212]" />
         </div>
 
-        {/* Top Navigation */}
-        <TopNav />
+        {/* Top Navigation Removed as per user request */}
+        {/* <TopNav /> */}
 
         {/* Centered Logo & Info */}
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center pt-24 md:pt-40">
