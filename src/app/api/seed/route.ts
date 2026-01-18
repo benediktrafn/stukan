@@ -6,10 +6,13 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
-        // 1. Wipe the table and reset the ID counter (User Requested TRUNCATE)
-        await sql`TRUNCATE TABLE matches RESTART IDENTITY;`;
+        // 1. Aggressive Wipe (User Confirmed DELETE worked where TRUNCATE failed)
+        await sql`DELETE FROM matches;`;
 
-        // 2. Insert fresh data
+        // 2. Reset Sequence
+        await sql`ALTER SEQUENCE matches_id_seq RESTART WITH 1;`;
+
+        // 3. Insert fresh data
         await sql`INSERT INTO matches (teams, start_time, league, is_highlight) VALUES 
       ('Wolverhampton vs Newcastle', '2026-01-18T14:00:00Z', 'Premier League', false),
       ('Aston Villa vs Everton', '2026-01-18T16:30:00Z', 'Premier League', false),
@@ -43,8 +46,8 @@ export async function GET() {
         revalidatePath('/');
 
         return NextResponse.json({
-            message: `Database wiped (TRUNCATE) and reseeded successfully with 28 games!.`,
-            version: 'v4-truncate-strategy',
+            message: `Database wiped (DELETE) and reseeded successfully with 28 games!`,
+            version: 'v5-final-delete-strategy',
             timestamp: new Date().toISOString()
         });
     } catch (error) {
