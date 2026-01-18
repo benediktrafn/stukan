@@ -31,23 +31,29 @@ export default function Home() {
         <TopNav />
 
         {/* Centered Logo & Info */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-10">
-          <Image
-            src="/logo.svg"
-            alt="Stúkan Logo"
-            width={160}
-            height={160}
-            className="h-40 w-auto drop-shadow-gold"
-            priority
-          />
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center">
+          {/* 1. THE BRAND STAMP (Logo) */}
+          <div className="mb-8 opacity-90">
+            <Image
+              src="/logo.svg"
+              alt="Stúkan Logo"
+              width={180}
+              height={180}
+              priority
+              className="drop-shadow-gold"
+            />
+          </div>
 
-          {/* Info Bar - Moved under Logo */}
-          <div className="flex flex-wrap justify-center gap-6 mt-6 text-brand-gold/80 font-medium text-sm md:text-base tracking-wide">
-            <span className="flex items-center gap-2">🕒 Happy Hour 15-19</span>
-            <span className="hidden md:inline">•</span>
-            <span className="flex items-center gap-2">🎯 Pool & Darts</span>
-            <span className="hidden md:inline">•</span>
-            <span className="flex items-center gap-2">📺 Live Sports</span>
+          {/* 2. THE HEADLINE (Massive, Premium Serif) */}
+          <h1 className="font-serif text-5xl md:text-7xl text-brand-gold mb-4 text-center tracking-tight drop-shadow-lg">
+            HAPPY HOUR 15–19
+          </h1>
+
+          {/* 3. THE SUB-HEADLINE (Clean Sans, Wide Spacing) */}
+          <div className="flex items-center gap-6 text-white/60 text-sm md:text-lg tracking-[0.3em] uppercase font-medium mb-12">
+            <span>Pool & Darts</span>
+            <span className="text-brand-gold/50">|</span>
+            <span>Live Sports</span>
           </div>
         </div>
 
