@@ -33,43 +33,42 @@ export default function Home() {
         {/* Centered Logo & Info */}
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center">
 
-          <div className="flex flex-col items-center justify-center text-center z-10 mt-8 mb-16">
-            {/* 1. THE LOGO */}
-            <div className="mb-10 opacity-90 transition-opacity hover:opacity-100">
-              <Image
-                src="/logo.svg"
-                alt="Stúkan Logo"
-                width={160}
-                height={160}
-                priority
-                className="drop-shadow-2xl"
-              />
-            </div>
+          {/* 1. THE LOGO (Massive & Centered) */}
+          <div className="mb-12 opacity-90 hover:opacity-100 transition-opacity duration-500">
+            <Image
+              src="/logo.svg"
+              alt="Stúkan"
+              width={500}
+              height={150}
+              className="w-[280px] md:w-[500px] h-auto drop-shadow-2xl"
+              priority
+            />
+          </div>
 
-            {/* 2. THE HEADLINE - White, Serif, Elegant */}
-            <h2 className="font-serif text-4xl md:text-6xl text-white mb-6 tracking-wide leading-tight drop-shadow-lg">
-              Happy Hour <span className="italic text-brand-gold font-light">15–19</span>
-            </h2>
+          {/* 2. THE UNIFIED NAV ROW */}
+          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 text-xs md:text-base text-white/80 font-sans tracking-[0.25em] uppercase z-20 mb-16">
 
-            {/* 3. THE SUBTEXT - Navigation Links */}
-            <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-xs md:text-sm text-white/70 font-sans tracking-[0.25em] uppercase font-medium z-20">
+            {/* Item 1 */}
+            <a href="#drinks" className="hover:text-brand-gold transition-colors duration-300">
+              Happy Hour 15–19
+            </a>
 
-              <a href="#schedule" className="hover:text-brand-gold transition-colors duration-300">Events</a>
+            {/* Separator */}
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-gold/60 shadow-[0_0_8px_rgba(198,168,124,0.5)]"></span>
 
-              <span className="w-1 h-1 rounded-full bg-brand-gold/50"></span>
+            {/* Item 2 */}
+            <span className="cursor-default hover:text-white transition-colors">
+              Pool & Darts
+            </span>
 
-              <a href="#drinks" className="hover:text-brand-gold transition-colors duration-300">Drinks</a>
+            {/* Separator */}
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-gold/60 shadow-[0_0_8px_rgba(198,168,124,0.5)]"></span>
 
-              <span className="w-1 h-1 rounded-full bg-brand-gold/50"></span>
+            {/* Item 3 */}
+            <a href="#location" className="hover:text-brand-gold transition-colors duration-300">
+              Location
+            </a>
 
-              {/* Static Item */}
-              <span className="text-white/50 cursor-default">Pool & Darts</span>
-
-              <span className="w-1 h-1 rounded-full bg-brand-gold/50"></span>
-
-              <a href="#location" className="hover:text-brand-gold transition-colors duration-300">Location</a>
-
-            </div>
           </div>
 
         </div>
