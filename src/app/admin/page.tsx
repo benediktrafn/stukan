@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { addMatch, deleteMatch, getMatches } from "@/lib/actions";
+import { addMatch, deleteMatch, getMatches, updateMatch } from "@/lib/actions";
 
 interface Match {
     id: number;
@@ -15,6 +15,7 @@ export default function AdminPage() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState("");
     const [matches, setMatches] = useState<Match[]>([]);
+    const [editingMatch, setEditingMatch] = useState<Match | null>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
     useEffect(() => {
@@ -33,31 +34,69 @@ export default function AdminPage() {
     }
 
     async function handleSubmit(formData: FormData): Promise<void> {
-        const result = await addMatch(formData);
+        let result;
+
+        if (editingMatch) {
+            // Include ID in formData explicitly if needed, but it's redundant if hidden input works
+            // The hidden input <input name="id" ... /> handles it.
+            result = await updateMatch(formData);
+        } else {
+            result = await addMatch(formData);
+        }
+
         if (result?.error) {
             alert(result.error);
         }
         if (result?.success) {
             formRef.current?.reset();
-            alert("Match Added!");
+            setEditingMatch(null);
+            alert(editingMatch ? "Match Updated!" : "Match Added!");
             await loadMatches();
         }
     }
 
     async function handleDelete(id: number): Promise<void> {
+        if (!confirm("Are you sure you want to delete this match?")) return;
+
         const result = await deleteMatch(id);
         if (result?.error) {
             alert(result.error);
         }
         if (result?.success) {
             await loadMatches();
+            // If we deleted the item being edited, clear edit state
+            if (editingMatch?.id === id) {
+                setEditingMatch(null);
+                formRef.current?.reset();
+            }
         }
+    }
+
+    function handleEdit(match: Match) {
+        setEditingMatch(match);
+        // Scroll to top to see form
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function handleCancelEdit() {
+        setEditingMatch(null);
+        formRef.current?.reset();
     }
 
     function handlePasswordSubmit(e: React.FormEvent) {
         e.preventDefault();
         window.location.href = `/admin?pass=${password}`;
     }
+
+    // Helper to format date for input (YYYY-MM-DD)
+    const getDateValue = (startTime: string) => {
+        return new Date(startTime).toISOString().split('T')[0];
+    };
+
+    // Helper to format time for input (HH:mm)
+    const getTimeValue = (startTime: string) => {
+        return new Date(startTime).toISOString().substring(11, 16);
+    };
 
     // Password form
     if (!isAuthenticated) {
@@ -95,12 +134,32 @@ export default function AdminPage() {
                     Admin Dashboard
                 </h1>
 
-                {/* Create Match Form */}
+                {/* Create/Edit Match Form */}
                 <div className="bg-bg-card p-6 rounded-xl border border-white/10 mb-8">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">
-                        Add New Match
-                    </h2>
-                    <form ref={formRef} action={handleSubmit} className="space-y-4">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-lg font-semibold text-text-primary">
+                            {editingMatch ? "Edit Match" : "Add New Match"}
+                        </h2>
+                        {editingMatch && (
+                            <button
+                                type="button"
+                                onClick={handleCancelEdit}
+                                className="text-sm text-text-primary/70 hover:text-white underline"
+                            >
+                                Cancel Editing
+                            </button>
+                        )}
+                    </div>
+
+                    <form
+                        ref={formRef}
+                        action={handleSubmit}
+                        className="space-y-4"
+                        key={editingMatch ? editingMatch.id : "new"} // Force re-render when switching modes
+                    >
+                        {/* Hidden ID field for updates */}
+                        <input type="hidden" name="id" value={editingMatch?.id || ""} />
+
                         <div>
                             <label className="block text-sm text-text-primary/70 mb-1">
                                 Teams
@@ -110,6 +169,7 @@ export default function AdminPage() {
                                 name="teams"
                                 placeholder="Home Team vs Away Team"
                                 required
+                                defaultValue={editingMatch?.teams || ""}
                                 className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none"
                             />
                         </div>
@@ -123,6 +183,7 @@ export default function AdminPage() {
                                     type="date"
                                     name="date"
                                     required
+                                    defaultValue={editingMatch ? getDateValue(editingMatch.start_time) : ""}
                                     className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none"
                                 />
                             </div>
@@ -134,6 +195,7 @@ export default function AdminPage() {
                                     type="time"
                                     name="time"
                                     required
+                                    defaultValue={editingMatch ? getTimeValue(editingMatch.start_time) : ""}
                                     className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none"
                                 />
                             </div>
@@ -147,6 +209,7 @@ export default function AdminPage() {
                                 type="text"
                                 name="league"
                                 placeholder="Premier League, Champions League, etc."
+                                defaultValue={editingMatch?.league || ""}
                                 className="w-full px-4 py-3 bg-bg-main border border-white/20 rounded-lg text-text-primary focus:border-brand-gold focus:outline-none"
                             />
                         </div>
@@ -156,6 +219,7 @@ export default function AdminPage() {
                                 type="checkbox"
                                 name="isHighlight"
                                 id="isHighlight"
+                                defaultChecked={editingMatch?.is_highlight || false}
                                 className="w-4 h-4 accent-brand-gold"
                             />
                             <label htmlFor="isHighlight" className="text-sm text-text-primary/70">
@@ -165,9 +229,12 @@ export default function AdminPage() {
 
                         <button
                             type="submit"
-                            className="w-full py-3 bg-brand-gold text-bg-main font-semibold rounded-lg hover:bg-brand-gold/90 transition-colors"
+                            className={`w-full py-3 font-semibold rounded-lg transition-colors ${editingMatch
+                                    ? "bg-blue-600 hover:bg-blue-500 text-white"
+                                    : "bg-brand-gold hover:bg-brand-gold/90 text-bg-main"
+                                }`}
                         >
-                            Add to Schedule
+                            {editingMatch ? "Update Match" : "Add to Schedule"}
                         </button>
                     </form>
                 </div>
@@ -185,7 +252,7 @@ export default function AdminPage() {
                     ) : (
                         <ul className="divide-y divide-white/10">
                             {matches.map((match) => (
-                                <li key={match.id} className="flex items-center justify-between py-3">
+                                <li key={match.id} className={`flex items-center justify-between py-3 ${editingMatch?.id === match.id ? "bg-white/5 rounded px-2 -mx-2" : ""}`}>
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2">
                                             {match.is_highlight && (
@@ -208,13 +275,22 @@ export default function AdminPage() {
                                             {match.league && `• ${match.league}`}
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={() => handleDelete(match.id)}
-                                        className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
-                                        title="Delete match"
-                                    >
-                                        ✕
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => handleEdit(match)}
+                                            className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                                            title="Edit match"
+                                        >
+                                            ✏️
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(match.id)}
+                                            className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                            title="Delete match"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
                                 </li>
                             ))}
                         </ul>

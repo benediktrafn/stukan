@@ -45,6 +45,37 @@ export async function deleteMatch(id: number) {
     }
 }
 
+export async function updateMatch(formData: FormData) {
+    const id = Number(formData.get("id"));
+    const teams = formData.get("teams") as string;
+    const date = formData.get("date") as string;
+    const time = formData.get("time") as string;
+    const league = (formData.get("league") as string) || null;
+    const isHighlight = formData.get("isHighlight") === "on";
+
+    if (!id || !teams || !date || !time) {
+        return { error: "ID, teams, date, and time are required" };
+    }
+
+    // Construct ISO timestamp
+    const startTime = new Date(`${date}T${time}:00`);
+
+    try {
+        await sql`
+      UPDATE matches 
+      SET teams=${teams}, start_time=${startTime.toISOString()}, league=${league}, is_highlight=${isHighlight}
+      WHERE id=${id}
+    `;
+
+        revalidatePath("/");
+        revalidatePath("/admin");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating match:", error);
+        return { error: String(error) };
+    }
+}
+
 export async function getMatches() {
     try {
         const result = await sql`
