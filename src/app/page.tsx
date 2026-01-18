@@ -120,7 +120,7 @@ export default async function Home() {
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-semibold text-text-primary">{drink.name}</h3>
                   <span className="text-brand-gold font-mono text-sm">
-                    {drink.price.toLocaleString('is-IS')} kr
+                    {drink.price.toLocaleString('de-DE')} kr
                   </span>
                 </div>
                 {drink.description && (

@@ -143,8 +143,8 @@ export default function AdminPage() {
                     <button
                         onClick={() => setActiveTab('schedule')}
                         className={`flex-1 py-4 text-center rounded-xl font-bold tracking-widest uppercase transition-all ${activeTab === 'schedule'
-                                ? "bg-brand-gold text-bg-main shadow-lg"
-                                : "bg-bg-card text-text-primary/50 hover:bg-white/5"
+                            ? "bg-brand-gold text-bg-main shadow-lg"
+                            : "bg-bg-card text-text-primary/50 hover:bg-white/5"
                             }`}
                     >
                         Schedule
@@ -152,8 +152,8 @@ export default function AdminPage() {
                     <button
                         onClick={() => setActiveTab('drinks')}
                         className={`flex-1 py-4 text-center rounded-xl font-bold tracking-widest uppercase transition-all ${activeTab === 'drinks'
-                                ? "bg-brand-gold text-bg-main shadow-lg"
-                                : "bg-bg-card text-text-primary/50 hover:bg-white/5"
+                            ? "bg-brand-gold text-bg-main shadow-lg"
+                            : "bg-bg-card text-text-primary/50 hover:bg-white/5"
                             }`}
                     >
                         Drinks
@@ -262,7 +262,7 @@ export default function AdminPage() {
                                         <div>
                                             <div className="flex items-center gap-3">
                                                 <span className="font-medium text-text-primary">{drink.name}</span>
-                                                <span className="text-brand-gold font-mono text-sm">{drink.price.toLocaleString('is-IS')} kr</span>
+                                                <span className="text-brand-gold font-mono text-sm">{drink.price.toLocaleString('de-DE')} kr</span>
                                             </div>
                                             {drink.description && (
                                                 <div className="text-xs text-text-primary/50">{drink.description}</div>
