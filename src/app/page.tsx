@@ -51,12 +51,24 @@ export default function Home() {
               Happy Hour <span className="italic text-brand-gold font-light">15–19</span>
             </h2>
 
-            {/* 3. THE SUBTEXT - Small, Wide Spacing, Uppercase */}
-            <div className="flex items-center gap-6 text-xs md:text-sm text-white/70 font-sans tracking-[0.25em] uppercase font-medium">
-              <span>Pool & Darts</span>
-              {/* Tiny Gold Dot Separator */}
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-gold/80 shadow-[0_0_8px_rgba(198,168,124,0.5)]"></span>
-              <span>Live Sports</span>
+            {/* 3. THE SUBTEXT - Navigation Links */}
+            <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-xs md:text-sm text-white/70 font-sans tracking-[0.25em] uppercase font-medium z-20">
+
+              <a href="#schedule" className="hover:text-brand-gold transition-colors duration-300">Events</a>
+
+              <span className="w-1 h-1 rounded-full bg-brand-gold/50"></span>
+
+              <a href="#drinks" className="hover:text-brand-gold transition-colors duration-300">Drinks</a>
+
+              <span className="w-1 h-1 rounded-full bg-brand-gold/50"></span>
+
+              {/* Static Item */}
+              <span className="text-white/50 cursor-default">Pool & Darts</span>
+
+              <span className="w-1 h-1 rounded-full bg-brand-gold/50"></span>
+
+              <a href="#location" className="hover:text-brand-gold transition-colors duration-300">Location</a>
+
             </div>
           </div>
 
@@ -99,7 +111,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 border-t border-white/10 bg-bg-main">
+      <footer id="location" className="py-8 px-4 border-t border-white/10 bg-bg-main">
         <div className="max-w-4xl mx-auto text-center text-text-primary/50 text-sm">
           <p>© 2026 Stúkan RVK Sportbar. All rights reserved.</p>
         </div>

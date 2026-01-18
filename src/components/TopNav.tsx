@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function TopNav() {
     return (
-        <nav className="absolute top-0 left-0 right-0 z-20">
+        <nav className="absolute top-0 left-0 right-0 z-20 md:hidden">
             <div className="max-w-6xl mx-auto px-4 py-4">
                 <ul className="flex items-center justify-center gap-8 md:gap-12">
                     <li>
