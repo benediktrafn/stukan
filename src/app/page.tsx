@@ -42,19 +42,12 @@ export default function Home() {
           />
 
           {/* Info Bar - Moved under Logo */}
-          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12 text-white/90">
-            <div className="flex items-center gap-3">
-              <Clock className="h-5 w-5 text-brand-gold" />
-              <span className="font-medium tracking-wide">Happy Hour 15-19</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Crosshair className="h-5 w-5 text-brand-gold" />
-              <span className="font-medium tracking-wide">Pool & Darts</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Tv className="h-5 w-5 text-brand-gold" />
-              <span className="font-medium tracking-wide">Live Sports</span>
-            </div>
+          <div className="flex flex-wrap justify-center gap-6 mt-6 text-brand-gold/80 font-medium text-sm md:text-base tracking-wide">
+            <span className="flex items-center gap-2">🕒 Happy Hour 15-19</span>
+            <span className="hidden md:inline">•</span>
+            <span className="flex items-center gap-2">🎯 Pool & Darts</span>
+            <span className="hidden md:inline">•</span>
+            <span className="flex items-center gap-2">📺 Live Sports</span>
           </div>
         </div>
 
