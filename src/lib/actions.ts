@@ -82,7 +82,6 @@ export async function getMatches() {
         const result = await sql`
       SELECT id, teams, start_time, league, is_highlight 
       FROM matches 
-      WHERE start_time >= CURRENT_DATE
       ORDER BY start_time ASC
     `;
 
