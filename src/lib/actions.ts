@@ -77,10 +77,15 @@ export async function updateMatch(formData: FormData) {
 }
 
 export async function getMatches() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to midnight this morning
+    const isoDate = today.toISOString();
+
     try {
         const result = await sql`
       SELECT id, teams, start_time, league, is_highlight 
       FROM matches 
+      WHERE start_time >= ${isoDate}
       ORDER BY start_time ASC
     `;
         return result.rows;
