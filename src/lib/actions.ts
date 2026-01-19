@@ -77,17 +77,18 @@ export async function updateMatch(formData: FormData) {
 }
 
 export async function getMatches() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to midnight this morning
-    const isoDate = today.toISOString();
-
     try {
+        // Use Postgres native date comparison to filter out past days
         const result = await sql`
       SELECT id, teams, start_time, league, is_highlight 
       FROM matches 
-      WHERE start_time >= ${isoDate}
+      WHERE start_time >= CURRENT_DATE
       ORDER BY start_time ASC
     `;
+
+        // Ensure the page gets fresh data on every request
+        revalidatePath('/');
+
         return result.rows;
     } catch (error) {
         console.error("Error fetching matches:", error);
