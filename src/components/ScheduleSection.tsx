@@ -1,12 +1,12 @@
+import { sql } from "@vercel/postgres";
 import { groupMatchesByDate, formatTime, DbMatch } from "@/lib/dateUtils";
-import { getMatches } from "@/lib/actions";
 
 export default async function ScheduleSection() {
     let matches: DbMatch[] = [];
 
     try {
-        const data = await getMatches();
-        matches = data as DbMatch[];
+        const result = await sql`SELECT * FROM matches ORDER BY start_time ASC`;
+        matches = result.rows as DbMatch[];
     } catch (error) {
         console.error("Error fetching matches:", error);
     }
